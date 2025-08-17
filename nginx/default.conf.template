@@ -1,0 +1,23 @@
+server {
+    server_name $host;
+    listen 3000;
+
+    root /usr/share/nginx/html;
+    index index.html;
+   
+    location ~* ^.+\.(?:css|js|ttf|eot|woff|woff2|svg|mp3|ogg|m4r)$ {
+      access_log off;
+      expires 1y;
+      add_header Cache-Control public;
+    }
+
+    # s3traf Web UI
+    location / {
+      try_files $uri $uri/ /index.html =404;
+      add_header Cache-Control "no-store, no-cache, must-revalidate";
+    }
+   
+   location /api {
+           proxy_pass  "${REACT_APP_API_URL}/api";
+   }
+  }

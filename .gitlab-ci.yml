@@ -1,0 +1,44 @@
+stages:
+  - build
+  - deploy
+#  - staging
+#  - mincifry
+
+build:
+  stage: build
+  tags: [ 'build' ]
+  script:
+    - docker build --tag s3trafui --tag $DOCKER_URL/s3trafui:latest .
+    - docker push $DOCKER_URL/s3trafui:latest
+
+deploy:
+  stage: deploy
+  tags: [ 'dev, migrator, s3traf' ]
+  script:
+    - docker pull $DOCKER_URL/s3trafui:latest
+    - docker tag $DOCKER_URL/s3trafui:latest s3trafui:latest
+    - cd /opt/s3traf-frontend/ ; docker-compose up -d
+
+#staging:
+#  stage: staging
+#  tags: ['staging']
+#  script:
+#    - docker pull $DOCKER_URL/s3trafui:latest
+#    - docker tag $DOCKER_URL/s3trafui:latest s3trafui:latest
+#    - cd /opt/webui/ ; docker-compose up -d
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == 'dev'
+#      when: always
+#    - when: never
+
+#mincifry:
+#  stage: mincifry
+#  tags: ['mincifry']
+#  script:
+#    - docker pull $DOCKER_URL/s3trafui:latest
+#    - docker tag $DOCKER_URL/s3trafui:latest s3trafui:latest
+#    - cd /opt/ ; docker-compose up -d
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == 'mincifry'
+#      when: always
+#    - when: never

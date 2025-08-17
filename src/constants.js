@@ -1,0 +1,12 @@
+
+export const SESSION = "session"
+export const STORAGE_NAME = "name"
+export const STORAGE_ORGANIZATION_ID = "orgId"
+export const STORAGE_ORGANIZATION_NAME = "orgName"
+export const STORAGE_ROLE = "role"
+export const STORAGE_ROLE_ID = "roleId"
+export const STORAGE_USER_NAME = "username"
+export const STORAGE_LOCALE = "lang"
+export const STORAGE_LICENSE_EXP_DATE = "license_exp_date"
+export const STORAGE_LICENSE_STATUS = "license_status"
+export const STORAGE_LICENSE_INFO = "license_info"

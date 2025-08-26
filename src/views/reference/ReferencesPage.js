@@ -3,6 +3,9 @@ import {CContainer, CNav, CNavItem, CNavLink, CTabPane} from "@coreui/react";
 
 import {useNavigate} from "react-router";
 import {VendorsPage} from "./vendor/VendorsPage";
+import {StoresPage} from "./store/StoresPage";
+import {ClientsPage} from "./client/ClientsPage";
+import {LoadingPointsPage} from "./loading-point/LoadingPointsPage";
 import {ClustersPage} from "./cluster/ClustersPage";
 import {MethodsPage} from "./method/MethodsPage";
 import {DepartmentsPage} from "./department/DepartmentsPage";
@@ -16,12 +19,44 @@ const ReferencesPage = memo(({activeTab}) => {
     const navigate = useNavigate();
 
     const [activeKey, setActiveKey] = useState(activeTab);
+    const [selectedStoreId, setSelectedStoreId] = useState(undefined);
+
+    const handleStoreSelect = (selectedStoreKeys) => {
+        setSelectedStoreId(selectedStoreKeys && selectedStoreKeys.length>0 ? selectedStoreKeys[0] : undefined);
+    }
 
     return (
         <CContainer lg>
             {/*<h4 className={"mb-4 mt-2"}> Справочники</h4>*/}
 
             <CNav className={"mb-3 nav-underline"}>
+                <CNavItem>
+                    <CNavLink href={"#"} active={activeKey === 1} onClick={() => {
+                        setActiveKey(1)
+                        navigate("/references");
+                    }}>
+                        Нефтебазы
+                    </CNavLink>
+                </CNavItem>
+                <CNavItem>
+                    <CNavLink href={"#"} active={activeKey === 2} disabled={!selectedStoreId} onClick={() => {
+                        setActiveKey(2)
+                        navigate("/references");
+                    }}>
+                        Пункты налива
+                    </CNavLink>
+                </CNavItem>
+                <CNavItem>
+                    <CNavLink href={"#"} active={activeKey === 3} onClick={() => {
+                        setActiveKey(3)
+                        navigate("/references");
+                    }}>
+                        Клиенты
+                    </CNavLink>
+                </CNavItem>
+
+
+{/*
                 <CNavItem>
                     <CNavLink href={"#"} active={activeKey === 1} onClick={() => {
                         setActiveKey(1)
@@ -80,49 +115,26 @@ const ReferencesPage = memo(({activeTab}) => {
                         Отделы
                     </CNavLink>
                 </CNavItem>
+*/}
 
             </CNav>
             <CContainer className={"bg-white pt-3 ps-3 pe-3 pb-3 container"}>
 
                 {activeKey === 1 && (
                     <CTabPane role={"tabpanel"} visible={activeKey === 1}>
-                        <ClustersPage/>
+                        <StoresPage nStoreId={selectedStoreId} onStoreSelect={handleStoreSelect}/>
                     </CTabPane>
                 )}
 
                 {activeKey === 2 && (
                     <CTabPane role={"tabpanel"} visible={activeKey === 2}>
-                        <VendorsPage/>
+                        <LoadingPointsPage nStoreId={selectedStoreId}/>
                     </CTabPane>
                 )}
 
                 {activeKey === 3 && (
                     <CTabPane role={"tabpanel"} visible={activeKey === 3}>
-                        <DepartmentsPage/>
-                    </CTabPane>
-                )}
-
-                {activeKey === 4 && (
-                    <CTabPane role={"tabpanel"} visible={activeKey === 4}>
-                        <MethodsPage/>
-                    </CTabPane>
-                )}
-
-                {activeKey === 5 && (
-                    <CTabPane role={"tabpanel"} visible={activeKey === 5}>
-                        <RolesPage/>
-                    </CTabPane>
-                )}
-
-                {activeKey === 6 && (
-                    <CTabPane role={"tabpanel"} visible={activeKey === 6}>
-                        <UsersPage/>
-                    </CTabPane>
-                )}
-
-                {activeKey === 7 && (
-                    <CTabPane role={"tabpanel"} visible={activeKey === 7}>
-                        <ServersPage/>
+                        <ClientsPage/>
                     </CTabPane>
                 )}
 

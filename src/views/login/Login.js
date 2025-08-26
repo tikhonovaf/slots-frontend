@@ -3,7 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useCookies} from "react-cookie";
 import {CCard, CCardBody, CCardGroup, CCol, CContainer, CForm, CFormCheck, CFormInput, CRow} from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import {logo} from "../../assets/brand/logo";
+import logo from "../../assets/images/logo--ru.svg";
 import background from "../../assets/images/bg_login.jpg";
 import {
     SESSION,
@@ -116,10 +116,10 @@ const Login = () => {
                                 <CCard className={"p-4 mb-xl-5"}>
                                     <CCardBody>
                                         <div className={"d-flex justify-content-center"}>
-                                            <CIcon icon={logo} height={25}/>
+                                            <img src={logo} height={75} />
                                         </div>
                                         <div className={"d-flex justify-content-center mb-4"}>
-                                            <h1>s3hub</h1>
+                                            <h1>Slots</h1>
                                         </div>
                                         <div className={"mb-3"}>
                                             <CFormInput
@@ -191,7 +191,7 @@ const Login = () => {
                         </CCol>
                     </CRow>
                     <div className={"d-flex justify-content-center mt-5"}>
-                        <span className={"ms-1"}>s3hub ©2024</span>
+                        <span className={"ms-1"}>BelABM ©2025</span>
                     </div>
                 </CContainer>
             </div>

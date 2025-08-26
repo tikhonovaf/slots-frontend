@@ -11,8 +11,6 @@ export function useStores(): [StoreModel[], 'loading' | 'error' | 'success', Pro
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
-        console.log('useStores', fetchData);
-
         const response = await fetch(`/api/stores`, {
             method: 'GET',
             headers: {
@@ -26,9 +24,14 @@ export function useStores(): [StoreModel[], 'loading' | 'error' | 'success', Pro
             window.location.reload()
         }
 
-        return response.text()
+        return response.json()
             .then((data) => {
-                return (data ? JSON.parse(data) : {})
+                return data && data.length > 0
+                    ? data?.sort((a, b) => a.nStoreId - b.nStoreId)
+                        .map((item, index) => ({
+                            ...item, key: item.nStoreId
+                        }))
+                    : []
             })
     }
 

@@ -5,6 +5,8 @@ const queryKeys = {
     cluster: "cluster",
     checkAccess: "checkAccess",
     stores: "stores",
+    clients: "clients",
+    loadingPoints: "loadingPoints",
     vendors: "vendors",
     vendor: "vendor",
     resources: "resources",

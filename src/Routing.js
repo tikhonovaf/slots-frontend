@@ -13,6 +13,8 @@ import MainSlotsPage from "./views/slot/MainSlotsPage";
 import SettingsPage from "./views/setting/SettingsPage";
 import DebugPage from "./views/debug/DebugPage";
 import BucketClonePage from "./views/s3clone/synch/BucketClonePage";
+import UploadTemplatePage from "./views/upload-template/UploadTemplatePage"
+import CreateSlotsPage from "./views/create-slots/CreateSlotsPage"
 
 export const Routing = memo(() => {
 
@@ -39,6 +41,16 @@ export const Routing = memo(() => {
                     {/*    path={"settings/s3key/:id"}*/}
                     {/*    element={<SettingsPage activeTab={1}/>}*/}
                     {/*/>}*/}
+
+                    {<Route
+                        path={"upload-template"}
+                        element={<UploadTemplatePage/>}
+                    />}
+
+                    {<Route
+                        path={"create-slots"}
+                        element={<CreateSlotsPage/>}
+                    />}
 
                     {<Route
                         path={"settings/balance"}

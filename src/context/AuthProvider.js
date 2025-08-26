@@ -10,6 +10,8 @@ export const AuthProvider = memo(({children}) => {
 
     const [cookies] = useCookies([SESSION])
 
+    console.log('cookies', cookies);
+
     if ((!cookies.session || cookies.session === "")
         && (!sessionStorage.getItem(STORAGE_NAME) || sessionStorage.getItem(STORAGE_NAME) === "")) {
         return <Login/>;

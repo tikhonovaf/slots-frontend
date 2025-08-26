@@ -5,40 +5,47 @@ import CIcon from "@coreui/icons-react";
 import {AppSidebarNav} from "./AppSidebarNav";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
-import {cilApplicationsSettings, cilClone, cilDescription, cilDiamond, cilHouse, cilStorage,} from "@coreui/icons";
+import {cilEqualizer, cilStorage, cilCloudUpload, cilCalendar, cilEnvelopeLetter} from "@coreui/icons";
 
 const AppSidebar = () => {
 
     const navigation = [
         {
             component: CNavItem,
-            name: "Мониторинг",
-            to: "/",
-            icon: <CIcon icon={cilHouse} customClassName={"nav-icon"}/>,
+            name: "Справочники",
+            to: "/references",
+            icon: <CIcon icon={cilStorage} customClassName={"nav-icon"}/>,
+        },
+        {
+            component: CNavItem,
+            name: "Загрузка шаблона",
+            to: "/upload-template",
+            icon: <CIcon icon={cilCloudUpload} customClassName={"nav-icon"}/>,
+        },
+        {
+            component: CNavItem,
+            name: "Формирование слотов",
+            to: "/create-slots",
+            icon: <CIcon icon={cilEqualizer} customClassName={"nav-icon"}/>,
         },
         {
             component: CNavItem,
             name: "Слоты",
             to: "/slots",
-            icon: <CIcon icon={cilHouse} customClassName={"nav-icon"}/>,
+            icon: <CIcon icon={cilCalendar} customClassName={"nav-icon"}/>,
         },
         {
             component: CNavItem,
-            name: "Правила",
-            to: "/settings",
-            icon: <CIcon icon={cilApplicationsSettings} customClassName={"nav-icon"}/>,
+            name: "Отправка писем",
+            to: "/send-mail",
+            icon: <CIcon icon={cilEnvelopeLetter} customClassName={"nav-icon"}/>,
         },
+        /*
         {
             component: CNavItem,
             name: "Быстрая копия",
             to: "/s3clone",
             icon: <CIcon icon={cilClone} customClassName={"nav-icon"}/>,
-        },
-        {
-            component: CNavItem,
-            name: "Справочники",
-            to: "/references",
-            icon: <CIcon icon={cilStorage} customClassName={"nav-icon"}/>,
         },
         {
             component: CNavItem,
@@ -52,7 +59,7 @@ const AppSidebar = () => {
             to: "/debug",
             icon: <CIcon icon={cilDiamond} customClassName={"nav-icon"}/>,
         },
-
+        */
     ];
 
     const [open, setOpen] = useState(true);
@@ -68,7 +75,7 @@ const AppSidebar = () => {
             }}
         >
             <CSidebarBrand className={"justify-content-start"} to={"/"}>
-                <h5 style={{margin: '5px 0 0 65px', letterSpacing: '7px'}}>S3HUB</h5>
+                <h5 style={{margin: '5px 0 0 65px', letterSpacing: '7px'}}>TTK SLOTS</h5>
                 {/*<CCardLink href={"/"} className={"pt-4 ps-4"}>*/}
                 {/*    <CIcon*/}
                 {/*        className={"sidebar-brand-full"}*/}

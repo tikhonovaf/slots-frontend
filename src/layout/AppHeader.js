@@ -148,23 +148,6 @@ const AppHeader = memo(() => {
                 >
 
                     <Space>
-                        <Dropdown menu={{items: rules}}>
-                            <Button>
-                                <Space>Добавить правило
-                                    <CIcon icon={cilApplicationsSettings}/>
-                                </Space>
-                            </Button>
-                        </Dropdown>
-
-                        <Dropdown menu={{items: items}}>
-                            <Button>
-                                <Space>
-                                    Добавить в справочник
-                                    <CIcon icon={cilStorage}/>
-                                </Space>
-                            </Button>
-                        </Dropdown>
-
                         <CHeaderBrand className={"mx-auto d-md-none"} to={"/"}>
                             <CIcon icon={logo} height={48} alt={"Logo"}/>
                         </CHeaderBrand>

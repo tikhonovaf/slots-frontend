@@ -15,7 +15,7 @@ import DebugPage from "./views/debug/DebugPage";
 import BucketClonePage from "./views/s3clone/synch/BucketClonePage";
 import UploadTemplatePage from "./views/upload-template/UploadTemplatePage"
 import CreateSlotsPage from "./views/create-slots/CreateSlotsPage"
-
+import SendMailPage from "./views/send-mail/SendMailPage"
 export const Routing = memo(() => {
 
     return <>
@@ -50,6 +50,11 @@ export const Routing = memo(() => {
                     {<Route
                         path={"create-slots"}
                         element={<CreateSlotsPage/>}
+                    />}
+
+                    {<Route
+                        path={"send-mail"}
+                        element={<SendMailPage/>}
                     />}
 
                     {<Route

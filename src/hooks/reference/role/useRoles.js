@@ -13,6 +13,7 @@ export function useRoles(): [RoleModel[], 'loading' | 'error' | 'success', Promi
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
+        /*
         const response = await fetch(`/api/admin/roles`, {
             method: 'GET',
             headers: {
@@ -30,6 +31,9 @@ export function useRoles(): [RoleModel[], 'loading' | 'error' | 'success', Promi
             .then((data) => {
                 return (data ? JSON.parse(data) : {})
             })
+        */
+
+        return [];
     }
 
     const {

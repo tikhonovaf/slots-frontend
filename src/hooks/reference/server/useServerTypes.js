@@ -11,6 +11,7 @@ export function useServerTypes(): [ServerTypeModel[], 'loading' | 'error' | 'suc
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
+        /*
         const response = await fetch(`/api/ref/serverTypes`, {
             method: 'GET',
             headers: {
@@ -28,6 +29,8 @@ export function useServerTypes(): [ServerTypeModel[], 'loading' | 'error' | 'suc
             .then((data) => {
                 return (data ? JSON.parse(data) : {})
             })
+        */
+       return [];
     }
 
     const {

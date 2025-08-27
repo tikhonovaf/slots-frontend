@@ -9,6 +9,7 @@ export function useClusters(name?): UseQueryResult<ClusterModel[]> {
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
+        /*
         const search = name ? `?startWith=${name}` : ""
         const response = await fetch(`/api/clusters/search${search}`, {
             method: 'GET',
@@ -27,6 +28,8 @@ export function useClusters(name?): UseQueryResult<ClusterModel[]> {
             .then((data) => {
                 return (data ? JSON.parse(data) : {})
             })
+        */
+        return [];
     }
 
     return useQuery(

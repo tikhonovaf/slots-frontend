@@ -75,7 +75,7 @@ const AppSidebar = () => {
             }}
         >
             <CSidebarBrand className={"justify-content-start"} to={"/"}>
-                <h5 style={{margin: '5px 0 0 65px', letterSpacing: '7px'}}>TTK SLOTS</h5>
+                <h5 style={{margin: '5px 0 0 65px', letterSpacing: '7px'}}>ТТК СЛОТЫ</h5>
                 {/*<CCardLink href={"/"} className={"pt-4 ps-4"}>*/}
                 {/*    <CIcon*/}
                 {/*        className={"sidebar-brand-full"}*/}

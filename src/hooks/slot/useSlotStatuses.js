@@ -1,20 +1,14 @@
-import {useQuery} from "react-query";
-import queryKeys from "../../queryKeys";
-
+import {useQuery, UseQueryResult} from "react-query";
+import queryKeys from "../queryKeys";
 import {useCookies} from "react-cookie";
-import {VendorModel} from "../../../models/reference/vendor.model";
-import {message} from "antd";
+import type {SlotStatusModel} from "../../models/slot/slot.status.model";
 
-
-export function useVendors(): [VendorModel[], 'loading' | 'error' | 'success', Promise] {
-
-
+export function useSlotStatuses(): [SlotStatusModel[], 'loading' | 'error' | 'success', Promise] {
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
-        /*
-        const response = await fetch(`/api/ref/vendors`, {
-            method: 'GET',
+        const response = await fetch('/api/slots/statuses', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 // 'Authorization': `Bearer ${token}`,
@@ -26,12 +20,11 @@ export function useVendors(): [VendorModel[], 'loading' | 'error' | 'success', P
             window.location.reload()
         }
 
-        return response.text()
-            .then((data) => {
-                return (data ? JSON.parse(data) : {})
+        return response.json()
+            .then(data => {
+                console.log('data', data);
+                return data ? data.map(item => ({...item, key: item.nStatusId})) : []
             })
-        */
-        return [];
     }
 
     const {
@@ -39,7 +32,7 @@ export function useVendors(): [VendorModel[], 'loading' | 'error' | 'success', P
         status,
         refetch
     } = useQuery(
-        [queryKeys.vendors],
+        [queryKeys.slotStatuses],
         () => fetchData(),
         {
             onSuccess: (data: any) => {

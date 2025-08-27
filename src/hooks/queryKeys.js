@@ -1,6 +1,7 @@
 const queryKeys = {
     clusters: "clusters",
     slots: "slots",
+    slotStatuses: "slotStatuses",
     buckets: "buckets",
     cluster: "cluster",
     checkAccess: "checkAccess",

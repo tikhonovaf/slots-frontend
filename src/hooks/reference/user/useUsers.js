@@ -12,6 +12,7 @@ export function useUsers(): [UserModel[], 'loading' | 'error' | 'success', Promi
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
+        /*
         const response = await fetch(`/api/admin/strafUsers/search`, {
             //todo change to GET
             method: 'GET',
@@ -30,6 +31,8 @@ export function useUsers(): [UserModel[], 'loading' | 'error' | 'success', Promi
             .then((data) => {
                 return (data ? JSON.parse(data) : {})
             })
+        */
+        return [];
     }
 
     const {

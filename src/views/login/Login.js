@@ -119,7 +119,7 @@ const Login = () => {
                                             <img src={logo} height={75} />
                                         </div>
                                         <div className={"d-flex justify-content-center mb-4"}>
-                                            <h1>Slots</h1>
+                                            <h1>Слоты</h1>
                                         </div>
                                         <div className={"mb-3"}>
                                             <CFormInput

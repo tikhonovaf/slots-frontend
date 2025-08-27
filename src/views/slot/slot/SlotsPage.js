@@ -2,7 +2,7 @@ import CIcon from "@coreui/icons-react";
 import {Button, Input, message, Space, Spin, Table, TableProps, Tooltip} from "antd";
 import moment from 'moment';
 
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {DeleteModal} from "../../../components/DeleteModal";
 import {Link} from "react-router-dom";
 import {useModals} from "../../../hooks/useModals";
@@ -10,10 +10,12 @@ import {SearchOutlined} from "@ant-design/icons";
 import {useNavigate, useParams} from "react-router";
 import {TableLocale} from "antd/es/table/interface";
 import {useSlots} from "../../../hooks/slot/useSlots";
+import {useSlotStatuses}  from "../../../hooks/slot/useSlotStatuses";
 import CreateOrUpdateSlot from "./CreateOrUpdateSlot";
 import {useCluster} from "../../../hooks/reference/cluster/useCluster";
 import {useDeleteCluster} from "../../../hooks/reference/cluster/useDeleteCluster";
 import {useStores} from "../../../hooks/reference/store/useStores";
+import {useClients} from "../../../hooks/reference/client/useClients";
 import {ReactComponent as SuccessIcon} from "../../../assets/brand/success.svg"
 import {ReactComponent as ErrorIcon} from "../../../assets/brand/error.svg"
 import {ReactComponent as WarningIcon} from "../../../assets/brand/warning.svg"
@@ -42,12 +44,13 @@ export const SlotsPage = () => {
     const searchInput = useRef(null);
     const [defaultPageSize, setDefaultPageSize] = useState(15);
     const [userFilter, setUserFilter] = useState([]);
-    const [storesFilter, setStoresFilter] = useState([]);
 
     const {data: slots, state: slotsStatus, refetch} = useSlots(filteredInfo);
     const [cluster, clusterStatus] = useCluster(selectedClusterId);
     const [deleteCluster] = useDeleteCluster();
     const [stores, storesStatus] = useStores();
+    const [clients, clientsStatus] = useClients();
+    const [statuses, statusesStatus] = useSlotStatuses();
     // const [users, usersStatus] = useUsers();
 
 
@@ -130,17 +133,21 @@ export const SlotsPage = () => {
         )
     }, [slots]);
 
-    useEffect(() => {
-        const options = []
-        if (storesStatus === "success") {
-            stores && stores.length > 0 && stores?.map(item => {
-                options.push({
-                    text: item.vcName, value: item.nStoreId,
-                })
-            })
-            setStoresFilter(options)
-        }
+    const storesFilter = useMemo(() => {
+        return (storesStatus === "success" && stores)
+            ? stores.map(store => ({ value: store.nStoreId, text: store.vcName }))
+            : []
     }, [stores, storesStatus]);
+    const clientsFilter = useMemo(() => {
+        return (clientsStatus === "success" && stores)
+            ? clients.map(client => ({ value: client.nClientId, text: client.vcName }))
+            : []
+    }, [clients, clientsStatus]);
+    const statusesFilter = useMemo(() => {
+        return (statusesStatus === "success" && statuses)
+            ? statuses.map(status => ({ value: status.nStatusId, text: status.vcName }))
+            : []
+    }, [statuses, statusesStatus]);
 
     const onDelete = (id, name) => {
         modals.openModal(DeleteModal, (modalId) => ({
@@ -231,7 +238,6 @@ export const SlotsPage = () => {
             dataIndex: 'nStoreId',
             key: 'nStoreId',
             filters: storesFilter,
-            onFilter: (value, record) => record.nStoreId === parseInt(value),
             filterSearch: true,
             filteredValue: filteredInfo.nStoreId || null,
             render: (item, record) => <Link className={'table-link'} to={`/references/slots/${record.id}`}
@@ -246,8 +252,7 @@ export const SlotsPage = () => {
             title: 'Клиент',
             dataIndex: 'nClientId',
             key: 'nClientId',
-            filter: userFilter,
-            onFilter: (value, record) => record.nClientId === parseInt(value),
+            filters: clientsFilter,
             filterSearch: true,
             filteredValue: filteredInfo.nClientId || null,
             render: (item, record) => <Link className={'table-link'} to={`/references/slots/${record.id}`}
@@ -260,12 +265,16 @@ export const SlotsPage = () => {
         },
         {
             title: 'Статус', // dataIndex: 'comment',
-            dataIndex: 'vcStatus',
-            key: 'vcStatus',
-            // filterSearch: true,
+            dataIndex: 'nStatusId',
+            key: 'nStatusId',
+            filterSearch: true,
+            filters: statusesFilter,
+            filterMultiple: false,
+            filteredValue: filteredInfo.nStatusId || null,
             render: (item, record) => <div style={{width: '100%'}}>
-                {record.vcStatus === "F" && <SuccessIcon style={{width: '25px', display: 'flex', margin: '-15px auto -5px auto'}}/>}
-                {record.vcStatus === "B" && <WarningIcon style={{width: '25px', display: 'flex', margin: '-10px auto -5px auto'}}/>}
+                {record.vcStatusCode === "F" && <SuccessIcon style={{width: '25px', display: 'flex', margin: '-15px auto -5px auto'}}/>}
+                {record.vcStatusCode === "B" && <WarningIcon style={{width: '25px', display: 'flex', margin: '-10px auto -5px auto'}}/>}
+                {record.vcStatusName}
             </div>,
             width: '90px',
         },

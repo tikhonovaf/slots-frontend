@@ -12,6 +12,7 @@ export function useRecordTypes(): [MethodModel[], 'loading' | 'error' | 'success
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
+        /*
         const response = await fetch(`/api/ref/recordTypes`, {
             method: 'GET',
             headers: {
@@ -29,6 +30,8 @@ export function useRecordTypes(): [MethodModel[], 'loading' | 'error' | 'success
             .then((data) => {
                 return (data ? JSON.parse(data) : {})
             })
+        */
+        return [];
     }
 
     const {

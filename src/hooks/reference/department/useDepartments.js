@@ -12,6 +12,7 @@ export function useDepartments(): [DepartmentModel[], 'loading' | 'error' | 'suc
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
+        /*
         const response = await fetch(`/api/admin/departments`, {
             method: 'GET',
             headers: {
@@ -29,6 +30,9 @@ export function useDepartments(): [DepartmentModel[], 'loading' | 'error' | 'suc
             .then((data) => {
                 return (data ? JSON.parse(data) : {})
             })
+        */
+
+        return [];
     }
 
     const {

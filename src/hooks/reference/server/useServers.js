@@ -11,6 +11,7 @@ export function useServers(): UseQueryResult<ServerModel[], any> {
     const [, , removeCookie] = useCookies()
 
     const fetchData = async () => {
+        /*
         const response = await fetch(`/api/servers/search`, {
             method: 'GET',
             headers: {
@@ -28,6 +29,8 @@ export function useServers(): UseQueryResult<ServerModel[], any> {
             .then((data) => {
                 return (data ? JSON.parse(data) : {})
             })
+        */
+        return [];
     }
 
     return useQuery(

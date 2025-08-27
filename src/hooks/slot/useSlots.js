@@ -5,8 +5,11 @@ import type {SlotModel} from "../../models/slot/slot.model";
 
 export function useSlots(filters): UseQueryResult<SlotModel[]> {
 
-    const { nStoreId } = filters;
-    const requestBody = { nStoreIds: nStoreId };
+    const { nStoreId, nStatusId } = filters || {};
+    const requestBody = {
+        nStoreIds: nStoreId,
+        nStatusId: nStatusId && nStatusId.length > 0 ? nStatusId[0] : undefined
+    };
 
     // 
     const [, , removeCookie] = useCookies()

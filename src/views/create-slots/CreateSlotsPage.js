@@ -1,8 +1,9 @@
 import React, {memo, useMemo, useState} from "react";
 import {useNavigate} from "react-router";
-import {CContainer, CNav, CNavItem, CNavLink, CTabPane} from "@coreui/react";
-import { Button, Form, Input, Select, Space, DatePicker } from 'antd';
+import {CContainer} from "@coreui/react";
+import { Button, Form, List, Select, Space, DatePicker } from 'antd';
 import dayjs from "dayjs";
+import {useGenerateSlots} from "../../hooks/slot/useGenerateSlots";
 
 import {useStores} from "../../hooks/reference/store/useStores";
 
@@ -11,6 +12,10 @@ const CreateSlotsPage = memo(({activeTab}) => {
     const [form] = Form.useForm();
     const [stores, storesStatus] = useStores();
     const { RangePicker } = DatePicker;
+    const generateSlots = useGenerateSlots();
+
+    const [generateResponse, setGenerateResponse] = useState(undefined);
+    const [generating, setGenerating] = useState(false);
 
     const storeOptions = useMemo(() => stores ? stores.map(s => ({ value: s.nStoreId, label: s.vcName })) : [], [stores]);
 
@@ -24,7 +29,28 @@ const CreateSlotsPage = memo(({activeTab}) => {
     };
     
     const onFinish = (values: any) => {
-        console.log(values);
+        const {nStoreIds, period} = values;
+        const [dDateBegin, dDateEnd] = period;
+
+        // Очищаем ответы перед выполнением
+        setGenerateResponse(undefined);
+        setGenerating(true);
+
+        // Выполняем запроса
+        generateSlots({
+            data: {
+                nStoreIds, dDateBegin, dDateEnd
+            },
+            afterSuccess: (data) => {
+                // Если успешно, то заполняем ответы для отображения
+                setGenerateResponse(data);
+                setGenerating(false);
+            },
+            afterError: (err) => {
+                // Снимаем режим выполнения
+                setGenerating(false);
+            }
+        })
     };
 
     const onReset = () => {
@@ -60,16 +86,30 @@ const CreateSlotsPage = memo(({activeTab}) => {
 
                     <Form.Item {...tailLayout}>
                         <Space>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" loading={generating}>
                             Сформировать
                         </Button>
-                        <Button htmlType="button" onClick={onReset}>
+                        <Button htmlType="button" onClick={onReset} loading={generating}>
                             Сбросить настройки
                         </Button>
                         </Space>
                     </Form.Item>
-                    </Form>
+                </Form>
 
+                {
+                    generateResponse && (
+                        <List
+                            header={<div>Результат формирования слотов</div>}
+                            bordered
+                            dataSource={generateResponse}
+                            renderItem={(item) => (
+                                <List.Item>
+                                    {item}
+                                </List.Item>
+                            )}
+                        />
+                    )
+                }
             </CContainer>
         </CContainer>
     );

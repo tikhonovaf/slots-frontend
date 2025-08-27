@@ -36,7 +36,6 @@ export const SlotsPage = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [connectionInProgress, setConnectionInProgress] = useState(false);
-    const [deleteInProgress, setDeleteInProgress] = useState(false);
     const [filteredInfo, setFilteredInfo] = useState({});
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -289,57 +288,6 @@ export const SlotsPage = () => {
         },
     };
 
-    const deleteItems = useCallback(() => {
-        if (selectedIds.length === 0) {
-            message.error("Выберите кластер");
-        }
-        // message.info(`Удаление кластров начато`)
-        setDeleteInProgress(true)
-        const ids = selectedIds
-        setSelectedRowKeys([])
-        setSelectedIds([])
-        ids.map((item) => {
-            try {
-                const _a = connectionData
-                _a.set(item, "IN_PROGRESS")
-                const data$ = fromFetch(`/api/slots/${item}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json', // 'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json',
-                    },
-
-                }).pipe(switchMap(response => {
-                    if (response.ok) {
-                        // OK return data
-                        return response.json();
-                    } else {
-                        // Server is returning a status requiring the client to try something else.
-                        return of({error: true, message: `Error ${response.status}`});
-                    }
-                }), catchError(err => {
-                    // Network or other error, handle appropriately
-                    // console.error(err);
-                    return of({error: true, message: err.message})
-
-                }));
-
-                data$.subscribe({
-                    next: result => {
-
-                    },
-                    complete: () => {
-                        refetch()
-                    }
-                });
-
-            } catch (e) {
-                console.log(e)
-            }
-        })
-        setDeleteInProgress(false)
-    }, [selectedRowKeys, selectedIds])
-
     return <>
         <h5 style={{
             margin: '0 0 30px 0', float: 'left'
@@ -350,16 +298,6 @@ export const SlotsPage = () => {
                 margin: '0px', float: 'right'
             }}
         >
-            <Tooltip title={"Добавить кластер"}>
-                <Button shape="rounde" icon={<CIcon icon={cilPlus}/>}
-                        onClick={() => setShowEditDialog(true)}/>
-            </Tooltip>
-            <Tooltip title={"Удалить кластер"}>
-                <Button shape="rounde" icon={<CIcon icon={cilTrash}/>}
-                        loading={deleteInProgress}
-                        disabled={deleteInProgress}
-                        onClick={() => deleteItems()}/>
-            </Tooltip>
             <Tooltip title={"Очистить фильтр"}>
                 <Button shape="rounde" icon={<CIcon icon={cilBrushAlt}/>} onClick={clearFilters}/>
             </Tooltip>

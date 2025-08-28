@@ -1,6 +1,7 @@
 import {useQuery, UseQueryResult} from "react-query";
 import queryKeys from "../queryKeys";
 import {useCookies} from "react-cookie";
+import {message} from "antd";
 import type {SlotStatusModel} from "../../models/slot/slot.status.model";
 
 export function useSlotStatuses(): [SlotStatusModel[], 'loading' | 'error' | 'success', Promise] {
@@ -22,7 +23,6 @@ export function useSlotStatuses(): [SlotStatusModel[], 'loading' | 'error' | 'su
 
         return response.json()
             .then(data => {
-                console.log('data', data);
                 return data ? data.map(item => ({...item, key: item.nStatusId})) : []
             })
     }

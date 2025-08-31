@@ -57,10 +57,6 @@ export const SlotsPage = () => {
         }
     }, [connectionInProgress])
 
-    const handleSelect = (id) => {
-        setShowEditDialog(true)
-    }
-
     useEffect(() => {
         if (slots && slots.length > 0) {
             setSelectedIds(slots?.map(item => item?.id))
@@ -68,9 +64,6 @@ export const SlotsPage = () => {
     }, [slots])
 
     useEffect(() => {
-        if (params?.id) {
-            handleSelect(params?.id);
-        }
     }, [params]);
 
     const getColumnSearchProps = (dataIndex) => ({
@@ -229,10 +222,7 @@ export const SlotsPage = () => {
             onFilter: (value, record) => record.nLoadingPointId === parseInt(value),
             filterSearch: true,
             filteredValue: filteredInfo.nLoadingPointId || null,
-            render: (item, record) => <Link className={'table-link'} to={`/references/slots/${record.id}`}
-                                            onClick={() => handleSelect(record.id)}>
-                <div style={{width: '100%'}}>{record.vcLoadingPointName}</div>
-            </Link>, // ...getColumnSearchProps('userId'),
+            render: (item, record) => <div style={{width: '100%'}}>{record.vcLoadingPointName}</div>,
             sorter: (a, b) => a.nLoadingPointId - b.nLoadingPointId,
             sortDirections: ['ascend', 'descend', 'ascend'], // ellipsis: true,
             // width: '15%',
@@ -244,10 +234,7 @@ export const SlotsPage = () => {
             filters: storesFilter,
             filterSearch: true,
             filteredValue: filteredInfo.nStoreId || null,
-            render: (item, record) => <Link className={'table-link'} to={`/references/slots/${record.id}`}
-                                            onClick={() => handleSelect(record.id)}>
-                <div style={{width: '100%'}}>{record.vcStoreName}</div>
-            </Link>, // ...getColumnSearchProps('userId'),
+            render: (item, record) => <div style={{width: '100%'}}>{record.vcStoreName}</div>,
             sorter: (a, b) => a.nStoreId - b.nStoreId,
             sortDirections: ['ascend', 'descend', 'ascend'], // ellipsis: true,
             // width: '15%',
@@ -259,10 +246,7 @@ export const SlotsPage = () => {
             filters: clientsFilter,
             filterSearch: true,
             filteredValue: filteredInfo.nClientId || null,
-            render: (item, record) => <Link className={'table-link'} to={`/references/slots/${record.id}`}
-                                            onClick={() => handleSelect(record.id)}>
-                <div style={{width: '100%'}}>{record.vcClientName}</div>
-            </Link>, // ...getColumnSearchProps('userId'),
+            render: (item, record) => <div style={{width: '100%'}}>{record.vcClientName}</div>,
             sorter: (a, b) => a.nClientId - b.nClientId,
             sortDirections: ['ascend', 'descend', 'ascend'], // ellipsis: true,
             // width: '15%',

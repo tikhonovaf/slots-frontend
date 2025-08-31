@@ -2,13 +2,17 @@ import {useQuery, UseQueryResult} from "react-query";
 import queryKeys from "../queryKeys";
 import {useCookies} from "react-cookie";
 import type {SlotModel} from "../../models/slot/slot.model";
+import {DATE_FORMAT, DATE_DISPLAY_FORMAT} from "../../constants";
 
 export function useSlots(filters): UseQueryResult<SlotModel[]> {
 
-    const { nStoreId, nStatusId } = filters || {};
+    const { nStoreId, nClientId, nStatusId, dDateBegin, dDateEnd } = filters || {};
     const requestBody = {
         nStoreIds: nStoreId,
-        nStatusId: nStatusId && nStatusId.length > 0 ? nStatusId[0] : undefined
+        nClientIds: nClientId,
+        nStatusId: nStatusId && nStatusId.length > 0 ? nStatusId[0] : undefined,
+        dDateBegin: dDateBegin?.format(DATE_FORMAT),
+        dDateEnd: dDateEnd?.format(DATE_FORMAT)
     };
 
     // 
@@ -29,9 +33,13 @@ export function useSlots(filters): UseQueryResult<SlotModel[]> {
             window.location.reload()
         }
 
-        return response.text()
+        return response.json()
             .then((data) => {
-                return (data ? JSON.parse(data) : {})
+                return data && data.length > 0
+                    ? data.map((item, index) => ({
+                            ...item, key: item.nSlotId
+                        }))
+                    : []
             })
     }
 

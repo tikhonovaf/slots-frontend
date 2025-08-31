@@ -1,8 +1,9 @@
 import CIcon from "@coreui/icons-react";
-import {Button, Input, message, Space, Spin, Table, TableProps, Tooltip} from "antd";
+import {Button, Input, message, Space, DatePicker, Table, TableProps, Tooltip} from "antd";
 import moment from 'moment';
 
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import dayjs from "dayjs";
 import {DeleteModal} from "../../../components/DeleteModal";
 import {Link} from "react-router-dom";
 import {useModals} from "../../../hooks/useModals";
@@ -11,14 +12,13 @@ import {useNavigate, useParams} from "react-router";
 import {TableLocale} from "antd/es/table/interface";
 import {useSlots} from "../../../hooks/slot/useSlots";
 import {useSlotStatuses}  from "../../../hooks/slot/useSlotStatuses";
-import CreateOrUpdateSlot from "./CreateOrUpdateSlot";
-import {useCluster} from "../../../hooks/reference/cluster/useCluster";
-import {useDeleteCluster} from "../../../hooks/reference/cluster/useDeleteCluster";
+import ChangeSlotStatusDialog from "./ChangeSlotStatusDialog";
 import {useStores} from "../../../hooks/reference/store/useStores";
 import {useClients} from "../../../hooks/reference/client/useClients";
 import {ReactComponent as SuccessIcon} from "../../../assets/brand/success.svg"
 import {ReactComponent as ErrorIcon} from "../../../assets/brand/error.svg"
 import {ReactComponent as WarningIcon} from "../../../assets/brand/warning.svg"
+import {DATE_FORMAT, DATE_DISPLAY_FORMAT} from "../../../constants";
 
 import {fromFetch} from "rxjs/internal/observable/dom/fetch";
 import {catchError, of, switchMap} from "rxjs";
@@ -32,13 +32,12 @@ export const SlotsPage = () => {
     const modals = useModals();
     const params = useParams();
 
-    const [showEditDialog, setShowEditDialog] = useState(false);
-    const [selectedClusterId, setSelectedClusterId] = useState("");
+    const [showChangeSlotStatusDialog, setShowChangeSlotStatusDialog] = useState(false);
     const [slotsWithKey, setSlotsWithKey] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [connectionInProgress, setConnectionInProgress] = useState(false);
-    const [filteredInfo, setFilteredInfo] = useState({});
+    const [filteredInfo, setFilteredInfo] = useState({ dDateBegin: dayjs(), dDateEnd: dayjs().add(1, 'day')});
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
@@ -46,12 +45,10 @@ export const SlotsPage = () => {
     const [userFilter, setUserFilter] = useState([]);
 
     const {data: slots, state: slotsStatus, refetch} = useSlots(filteredInfo);
-    const [cluster, clusterStatus] = useCluster(selectedClusterId);
-    const [deleteCluster] = useDeleteCluster();
     const [stores, storesStatus] = useStores();
     const [clients, clientsStatus] = useClients();
     const [statuses, statusesStatus] = useSlotStatuses();
-    // const [users, usersStatus] = useUsers();
+    const { RangePicker } = DatePicker;
 
 
     useEffect(() => {
@@ -61,7 +58,6 @@ export const SlotsPage = () => {
     }, [connectionInProgress])
 
     const handleSelect = (id) => {
-        setSelectedClusterId(id);
         setShowEditDialog(true)
     }
 
@@ -154,7 +150,6 @@ export const SlotsPage = () => {
             title: "Удаление кластера",
             text: 'Вы уверены, что хотите удалить кластер ' + `${name}` + '?',
             onSubmit: async () => {
-                deleteCluster(id);
                 modals.closeModal(modalId);
             },
         }));
@@ -176,9 +171,20 @@ export const SlotsPage = () => {
     }
 
     const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter, extra) => {
-        setFilteredInfo(filters);
-        console.log('filters', filters);
-        // setSearchText(filters.clusterName);
+        setFilteredInfo({
+            ...filteredInfo,
+            ...filters
+        });
+    };
+
+    const handlePeriodChange = (dates, dateStrings) => {
+        const [dDateBegin, dDateEnd] = dates;
+        console.log('dates', dates, dDateBegin?.format(DATE_FORMAT));
+        setFilteredInfo({
+            ...filteredInfo,
+            dDateBegin,
+            dDateEnd
+        });
     };
 
     const columns = [
@@ -198,8 +204,6 @@ export const SlotsPage = () => {
             title: 'Дата',
             dataIndex: 'dDate',
             key: 'dDate', ...getColumnSearchProps('dDate'),
-            filteredValue: filteredInfo.dDate || null,
-            filterSearch: true,
             render: (item, record) => <div style={{width: '100%'}}>{record.dDate ? moment(record.dDate).format('DD.MM.YYYY') : ''}</div>,
             sorter: (a, b) => a.dDate.length - b.dDate.length,
             sortDirections: ['ascend', 'descend', 'ascend'],
@@ -297,17 +301,32 @@ export const SlotsPage = () => {
         },
     };
 
+    const handleChangeSlotStatus = () => {
+        setShowChangeSlotStatusDialog(true);
+    }
+
     return <>
         <h5 style={{
             margin: '0 0 30px 0', float: 'left'
         }}>Слоты</h5>
 
-        <Space
-            style={{
-                margin: '0px', float: 'right'
-            }}
-        >
+        <Space style={{margin: 0, float: 'right'}}>
             <Tooltip title={"Очистить фильтр"}>
+                <Button
+                    shape="rounde"
+                    onClick={handleChangeSlotStatus}
+                    style={{marginRight: '10px'}}
+                    disabled={selectedRowKeys.length==0}
+                >
+                    Резервирование
+                </Button>
+                <RangePicker
+                    style={{marginRight: '10px'}}
+                    placeholder={["Начало периода", "Окончание периода"]}
+                    onChange={handlePeriodChange}
+                    format={DATE_DISPLAY_FORMAT}
+                    value={[filteredInfo.dDateBegin, filteredInfo.dDateEnd]}
+                />
                 <Button shape="rounde" icon={<CIcon icon={cilBrushAlt}/>} onClick={clearFilters}/>
             </Tooltip>
         </Space>
@@ -328,13 +347,15 @@ export const SlotsPage = () => {
             rowKey={record => record.nSlotId}
             locale={tableLocale}
         />
-        <CreateOrUpdateSlot open={showEditDialog}
-                                data={cluster}
-                                onClose={() => {
-                                    setShowEditDialog(false)
-                                    setSelectedClusterId("")
-                                    navigate('/slots', {replace: true});
-                                }}/>
+        <ChangeSlotStatusDialog
+            open={showChangeSlotStatusDialog}
+            data={selectedIds}
+            clients={clients}
+            selectedSlots={selectedRowKeys}
+            onClose={() => {
+                setShowChangeSlotStatusDialog(false)
+            }}
+        />
     </>
 
 }

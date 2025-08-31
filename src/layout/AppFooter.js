@@ -5,7 +5,7 @@ const AppFooter = () => {
   return (
     <CFooter>
       <div>
-          <span style={{fontSize: '13px', color: 'gray'}}>s3Hub team © 2024</span>
+          <span style={{fontSize: '13px', color: 'gray'}}>BelABM © 2025</span>
       </div>
     </CFooter>
   );

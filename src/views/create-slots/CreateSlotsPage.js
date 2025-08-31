@@ -28,7 +28,7 @@ const CreateSlotsPage = memo(({activeTab}) => {
         wrapperCol: { offset: 4, span: 20 },
     };
     
-    const onFinish = (values: any) => {
+    const handleFinish = (values: any) => {
         const {nStoreIds, period} = values;
         const [dDateBegin, dDateEnd] = period;
 
@@ -67,7 +67,7 @@ const CreateSlotsPage = memo(({activeTab}) => {
                     {...layout}
                     form={form}
                     name="control-hooks"
-                    onFinish={onFinish}
+                    onFinish={handleFinish}
                     initialValues={{ period: [dayjs(), dayjs().add(1, 'day')] }}
                     >
                     <Form.Item name="nStoreIds" label="Нефтебазы" rules={[{ required: true }]}>

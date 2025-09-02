@@ -15,6 +15,7 @@ import {useSlotStatuses}  from "../../../hooks/slot/useSlotStatuses";
 import ChangeSlotStatusDialog from "./ChangeSlotStatusDialog";
 import {useStores} from "../../../hooks/reference/store/useStores";
 import {useClients} from "../../../hooks/reference/client/useClients";
+import {useChangeSlotStatus} from "../../../hooks/slot/useChangeSlotStatus";
 import {ReactComponent as SuccessIcon} from "../../../assets/brand/success.svg"
 import {ReactComponent as ErrorIcon} from "../../../assets/brand/error.svg"
 import {ReactComponent as WarningIcon} from "../../../assets/brand/warning.svg"
@@ -33,9 +34,9 @@ export const SlotsPage = () => {
     const params = useParams();
 
     const [showChangeSlotStatusDialog, setShowChangeSlotStatusDialog] = useState(false);
+    const [changeSlotStatusType, setChangeSlotStatusType] = useState(undefined);
     const [slotsWithKey, setSlotsWithKey] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const [selectedIds, setSelectedIds] = useState([]);
     const [connectionInProgress, setConnectionInProgress] = useState(false);
     const [filteredInfo, setFilteredInfo] = useState({ dDateBegin: dayjs(), dDateEnd: dayjs().add(1, 'day')});
     const [searchText, setSearchText] = useState('');
@@ -44,24 +45,21 @@ export const SlotsPage = () => {
     const [defaultPageSize, setDefaultPageSize] = useState(15);
     const [userFilter, setUserFilter] = useState([]);
 
+    const [freeing, setFreeing] = useState(false);
+    const [freeResponse, setFreeResponse] = useState(undefined);
+    const freeSlots = useChangeSlotStatus("free");
+
     const {data: slots, state: slotsStatus, refetch} = useSlots(filteredInfo);
     const [stores, storesStatus] = useStores();
     const [clients, clientsStatus] = useClients();
     const [statuses, statusesStatus] = useSlotStatuses();
     const { RangePicker } = DatePicker;
 
-
     useEffect(() => {
         if (connectionInProgress) {
             message.info(`Проверка соединения в процессе...`)
         }
     }, [connectionInProgress])
-
-    useEffect(() => {
-        if (slots && slots.length > 0) {
-            setSelectedIds(slots?.map(item => item?.id))
-        }
-    }, [slots])
 
     useEffect(() => {
     }, [params]);
@@ -269,24 +267,44 @@ export const SlotsPage = () => {
     ];
 
     const rowSelectionChange = (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         setSelectedRowKeys(selectedRowKeys)
-        setSelectedIds(selectedRowKeys)
     }
 
     const rowSelection = {
         selectedRowKeys: selectedRowKeys, onSelectAll: (selected, selectedRows, changeRows) => {
             if (selectedRowKeys.length === 0) {
                 setSelectedRowKeys([]);
-                setSelectedIds([]);
             }
         }, onChange: (selectedRowKeys, selectedRows) => {
             rowSelectionChange(selectedRowKeys, selectedRows)
         },
     };
 
-    const handleChangeSlotStatus = () => {
+    const handleClickReserve = () => {
         setShowChangeSlotStatusDialog(true);
+        setChangeSlotStatusType("reserve");
+    }
+
+    const handleClickFree = () => {
+        // Очищаем ответы перед выполнением
+        setFreeResponse(undefined);
+        setFreeing(true);
+
+        // Выполняем запроса
+        freeSlots({
+            data: selectedRowKeys.map(nSlotId => ({nSlotId})),
+            afterSuccess: (data) => {
+                // Если успешно, то заполняем ответы для отображения
+                setFreeResponse(data);
+                setFreeing(false);
+                setSelectedRowKeys([]);
+            },
+            afterError: (err) => {
+                // Снимаем режим выполнения
+                setFreeing(false);
+            }
+        })
+
     }
 
     return <>
@@ -298,11 +316,20 @@ export const SlotsPage = () => {
             <Tooltip title={"Очистить фильтр"}>
                 <Button
                     shape="rounde"
-                    onClick={handleChangeSlotStatus}
+                    onClick={handleClickReserve}
                     style={{marginRight: '10px'}}
                     disabled={selectedRowKeys.length==0}
                 >
-                    Резервирование
+                    Резервировать
+                </Button>
+                <Button
+                    shape="rounde"
+                    onClick={handleClickFree}
+                    style={{marginRight: '10px'}}
+                    disabled={selectedRowKeys.length==0}
+                    loading={freeing}
+                >
+                    Снять с резерва
                 </Button>
                 <RangePicker
                     style={{marginRight: '10px'}}
@@ -333,11 +360,16 @@ export const SlotsPage = () => {
         />
         <ChangeSlotStatusDialog
             open={showChangeSlotStatusDialog}
-            data={selectedIds}
+            data={selectedRowKeys}
             clients={clients}
             selectedSlots={selectedRowKeys}
-            onClose={() => {
+            changeSlotStatusType={changeSlotStatusType}
+            onClose={(successReserve) => {
                 setShowChangeSlotStatusDialog(false)
+                setChangeSlotStatusType(undefined)
+                if(successReserve) {
+                    setSelectedRowKeys([]);
+                }
             }}
         />
     </>

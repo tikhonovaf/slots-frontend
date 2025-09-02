@@ -14,7 +14,7 @@ import {useNavigate} from "react-router";
 import {useChangeSlotStatus} from "../../../hooks/slot/useChangeSlotStatus";
 
 
-const ChangeSlotStatusDialog = memo(({open,data,clients,selectedSlots,onClose}) => {
+const ChangeSlotStatusDialog = memo(({open,data,clients,selectedSlots,changeSlotStatusType,onClose}) => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [newCluster, setNewCluster] = useState();
@@ -26,7 +26,7 @@ const ChangeSlotStatusDialog = memo(({open,data,clients,selectedSlots,onClose}) 
     const clientOptions = useMemo(() => clients ? clients.map(s => ({ value: s.nClientId, label: s.vcName })) : [], [clients]);
     const [generateResponse, setGenerateResponse] = useState(undefined);
     const [generating, setGenerating] = useState(false);
-    const changeSlotStatus = useChangeSlotStatus();
+    const reserveSlots = useChangeSlotStatus("reserve");
 
     const {
         data: accessInfo,
@@ -56,12 +56,13 @@ const ChangeSlotStatusDialog = memo(({open,data,clients,selectedSlots,onClose}) 
         setGenerating(true);
 
         // Выполняем запроса
-        changeSlotStatus({
-            data: selectedSlots.map(nSlotId => ({nSlotId, nClientId, nStatusId: 2})),
+        reserveSlots({
+            data: selectedSlots.map(nSlotId => ({nSlotId, nClientId})),
             afterSuccess: (data) => {
                 // Если успешно, то заполняем ответы для отображения
                 setGenerateResponse(data);
                 setGenerating(false);
+                onClose(true)
             },
             afterError: (err) => {
                 // Снимаем режим выполнения
@@ -79,7 +80,7 @@ const ChangeSlotStatusDialog = memo(({open,data,clients,selectedSlots,onClose}) 
             bodyStyle={{paddingBottom: 20, paddingTop: 100}}
         >
                 <h6 style={{margin: '-8px 0px 30px 0px'}}>
-                    Резервирование слотов
+                    {`${changeSlotStatusType==='free' ? "Снятие слотов с резерва" : "Резервирование слотов"}`}
                 </h6>
 
                 <Form
@@ -101,7 +102,7 @@ const ChangeSlotStatusDialog = memo(({open,data,clients,selectedSlots,onClose}) 
                     <Form.Item {...tailLayout}>
                         <Space>
                         <Button type="primary" htmlType="submit" loading={generating}>
-                            Зарезервировать
+                            {`${changeSlotStatusType==='free' ? "Снять" : "Зарезервировать"}`}
                         </Button>
                         <Button htmlType="button" onClick={handleClose} loading={generating}>
                             Отмена

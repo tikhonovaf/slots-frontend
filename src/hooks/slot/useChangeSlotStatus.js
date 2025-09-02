@@ -6,18 +6,18 @@ import type {ChangeSlotStatusParametersModel} from "../../models/slot/change-slo
 import {message} from "antd";
 
 
-export function useChangeSlotStatus(): ChangeSlotStatusModel {
+export function useChangeSlotStatus(type:string): ChangeSlotStatusModel {
     const queryClient = useQueryClient();
     const [removeCookie] = useCookies()
 
     let _callbackSuccess: any;
     let _callbackError: any;
 
-    const _useApi = async (data: GenerateSloChangeSlotStatusParametersModeltModel, afterSuccess: any, afterError: any) => {
+    const _useApi = async (data: ChangeSlotStatusParametersModel, afterSuccess: any, afterError: any) => {
         _callbackSuccess = afterSuccess;
         _callbackError = afterError;
 
-        const response = await fetch(`/api/slots`, {
+        const response = await fetch(`/api/slots/${type}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,8 +30,7 @@ export function useChangeSlotStatus(): ChangeSlotStatusModel {
         if (response.status !== 204) {
             return {error: `${response.status}: Слоты не удалось зарезервировать`}
         }
-        return response.json()
-            .then((data) => data)
+        return {}; //response.json().then((data) => data)
     }
 
     const {mutate} = useMutation({
@@ -42,7 +41,8 @@ export function useChangeSlotStatus(): ChangeSlotStatusModel {
                 _callbackError && _callbackError(data);
             } else {
                 queryClient.invalidateQueries([queryKeys.slots]);
-                message.success("Слоты были сгенерены");
+                queryClient.refetchQueries([queryKeys.slots])
+                message.success(type === 'free' ? 'Слоты были освобождены' : 'Слоты были зарезервированы');
                 _callbackSuccess && _callbackSuccess(data);
             }
         },

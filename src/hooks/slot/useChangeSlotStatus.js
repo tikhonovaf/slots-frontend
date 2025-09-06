@@ -27,16 +27,26 @@ export function useChangeSlotStatus(type:string): ChangeSlotStatusModel {
             body: JSON.stringify(data),
         })
 
-        if (response.status !== 204) {
-            return {error: `${response.status}: Слоты не удалось зарезервировать`}
+        if (response.status >= 400) {
+            return type === 'free'
+                ? {error: `${response.status}: Слоты не удалось освободить`}
+                : {error: `${response.status}: Слоты не удалось зарезервировать`}
         }
-        return {}; //response.json().then((data) => data)
+        return response.json().then(data => data)
     }
 
     const {mutate} = useMutation({
         mutationFn: ({data, afterSuccess, afterError}) => _useApi(data, afterSuccess, afterError),
         onSuccess: (data: any) => {
-            if (data.message || data.error) {
+            console.log(Array.isArray(data), data);
+
+            if (Array.isArray(data)) {
+                queryClient.invalidateQueries([queryKeys.slots]);
+                queryClient.refetchQueries([queryKeys.slots])
+                data.forEach(m => message.info(m));
+                _callbackSuccess && _callbackSuccess(data);
+            }
+            else if (data.message || data.error) {
                 message.error(data.message || data.error)
                 _callbackError && _callbackError(data);
             } else {

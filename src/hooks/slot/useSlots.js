@@ -2,7 +2,7 @@ import {useQuery, UseQueryResult} from "react-query";
 import queryKeys from "../queryKeys";
 import {useCookies} from "react-cookie";
 import type {SlotModel} from "../../models/slot/slot.model";
-import {DATE_FORMAT, DATE_DISPLAY_FORMAT} from "../../constants";
+import {DATE_FORMAT} from "../../constants";
 
 export function useSlots(filters): UseQueryResult<SlotModel[]> {
 

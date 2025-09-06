@@ -16,6 +16,7 @@ import ChangeSlotStatusDialog from "./ChangeSlotStatusDialog";
 import {useStores} from "../../../hooks/reference/store/useStores";
 import {useClients} from "../../../hooks/reference/client/useClients";
 import {useChangeSlotStatus} from "../../../hooks/slot/useChangeSlotStatus";
+import {useDownload} from "../../../hooks/slot/useDownload";
 import {ReactComponent as SuccessIcon} from "../../../assets/brand/success.svg"
 import {ReactComponent as ErrorIcon} from "../../../assets/brand/error.svg"
 import {ReactComponent as WarningIcon} from "../../../assets/brand/warning.svg"
@@ -24,7 +25,7 @@ import {DATE_FORMAT, DATE_DISPLAY_FORMAT} from "../../../constants";
 import {fromFetch} from "rxjs/internal/observable/dom/fetch";
 import {catchError, of, switchMap} from "rxjs";
 
-import {cilBrushAlt, cilLink, cilPlus, cilTrash} from "@coreui/icons";
+import {cilBrushAlt, cilCloudDownload} from "@coreui/icons";
 
 
 export const SlotsPage = () => {
@@ -48,6 +49,7 @@ export const SlotsPage = () => {
     const [freeing, setFreeing] = useState(false);
     const [freeResponse, setFreeResponse] = useState(undefined);
     const freeSlots = useChangeSlotStatus("free");
+    const fetchDownload = useDownload();
 
     const {data: slots, state: slotsStatus, refetch} = useSlots(filteredInfo);
     const [stores, storesStatus] = useStores();
@@ -87,7 +89,7 @@ export const SlotsPage = () => {
             />
             <Space>
                 <Button
-                    onClick={clearFilters}
+                    onClick={handleClearFilters}
                     size="small"
                 >
                     Очистить
@@ -145,10 +147,13 @@ export const SlotsPage = () => {
             },
         }));
     };
-    const clearFilters = () => {
+    const handleClearFilters = () => {
         setFilteredInfo({});
         setSearchText("");
     };
+    const handleExcelClick = () => {
+        fetchDownload({filters: filteredInfo});
+    }
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
@@ -158,7 +163,7 @@ export const SlotsPage = () => {
 
     const tableLocale: TableLocale = {
         filterReset: <span
-            onClick={clearFilters}>{'Очистить'}</span>, // emptyText: <div style={{backgroundImage:cilMenu}}>Нет данных</div>,
+            onClick={handleClearFilters}>{'Очистить'}</span>, // emptyText: <div style={{backgroundImage:cilMenu}}>Нет данных</div>,
     }
 
     const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter, extra) => {
@@ -313,32 +318,38 @@ export const SlotsPage = () => {
         }}>Слоты</h5>
 
         <Space style={{margin: 0, float: 'right'}}>
-            <Tooltip title={"Очистить фильтр"}>
+            <Tooltip title={"Зарезервировать выбранные слоты"}>
                 <Button
                     shape="rounde"
                     onClick={handleClickReserve}
-                    style={{marginRight: '10px'}}
                     disabled={selectedRowKeys.length==0}
                 >
                     Резервировать
                 </Button>
+            </Tooltip>
+            <Tooltip title={"Снять резерв с выбранных слотов"}>
                 <Button
                     shape="rounde"
                     onClick={handleClickFree}
-                    style={{marginRight: '10px'}}
                     disabled={selectedRowKeys.length==0}
                     loading={freeing}
                 >
                     Снять с резерва
                 </Button>
+            </Tooltip>
+            <Tooltip title={"Установить фильтр по периоду слотов"}>
                 <RangePicker
-                    style={{marginRight: '10px'}}
                     placeholder={["Начало периода", "Окончание периода"]}
                     onChange={handlePeriodChange}
                     format={DATE_DISPLAY_FORMAT}
                     value={[filteredInfo.dDateBegin, filteredInfo.dDateEnd]}
                 />
-                <Button shape="rounde" icon={<CIcon icon={cilBrushAlt}/>} onClick={clearFilters}/>
+            </Tooltip>
+            <Tooltip title={"Скачать файл Excel со списком слотов"}>
+                <Button shape="rounde" icon={<CIcon icon={cilCloudDownload}/>} onClick={handleExcelClick}/>
+            </Tooltip>
+            <Tooltip title={"Очистить фильтр"}>
+                <Button shape="rounde" icon={<CIcon icon={cilBrushAlt}/>} onClick={handleClearFilters}/>
             </Tooltip>
         </Space>
 

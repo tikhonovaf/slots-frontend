@@ -5,19 +5,19 @@ import { Button, Form, List, Select, Space, DatePicker } from 'antd';
 import dayjs from "dayjs";
 import {useSendMAils} from "../../hooks/slot/useSentMails";
 
-import { useClients } from "../../hooks/reference/client/useClients";
+import { useClientUsers } from "../../hooks/reference/client/useClientUsers";
 
 const SendMailPage = memo(({activeTab}) => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const [clients, clientsStatus] = useClients();
+    const [clients, clientsStatus] = useClientUsers();
     const { RangePicker } = DatePicker;
     const sendMails = useSendMAils();
 
     const [generateResponse, setGenerateResponse] = useState(undefined);
     const [generating, setGenerating] = useState(false);
 
-    const clientsOptions = useMemo(() => clients ? clients.map(s => ({ value: s.nClientId, label: s.vcName })) : [], [clients]);
+    const clientsOptions = useMemo(() => clients ? clients.map(s => ({ value: s.nUserId, label: s.vcInfo })) : [], [clients]);
 
     const layout = {
         labelCol: { span: 4 },

@@ -1,5 +1,6 @@
 import CIcon from "@coreui/icons-react";
-import {Button, Input, message, Space, Spin, Table, TableProps, Tooltip} from "antd";
+import {Button, Input, message, Space, Spin, Table, TableProps, Tooltip, Alert} from "antd";
+import {CContainer} from "@coreui/react";
 
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
@@ -33,8 +34,6 @@ export const LoadingPointsPage = ({ nStoreId }) => {
 console.log('nStoreId', nStoreId);
 
     const [loadingPoints, loadingPointsStatus] = useLoadingPoints(nStoreId);
-
-console.log('loadingPoints', loadingPoints, loadingPointsStatus);
 
     const handleSelect = (id) => {
         setSelectedStoreId(id);
@@ -188,22 +187,37 @@ console.log('loadingPoints', loadingPoints, loadingPointsStatus);
             </Tooltip>
         </Space>
 
-        <Table
-            loading={loadingPointsStatus === "loading"}
-            columns={columns}
-            dataSource={loadingPoints}
-            onChange={handleTableChange}
-            size={"small"}
-            // pagination={{
-            //     defaultPageSize: defaultPageSize,
-            //     showSizeChanger: true,
-            // }}
-            pagination={false}
-            scroll={{x: "max-content",}}
-            rowSelection={rowSelection}
-            rowKey={record => record.nStoreId}
-            locale={tableLocale}
-        />
+        <CContainer className={"bg-white pt-3 ps-3 pe-3 pb-3 container"}>
+            {
+                !!nStoreId 
+                    ? (
+                        <Table
+                            loading={loadingPointsStatus === "loading"}
+                            columns={columns}
+                            dataSource={loadingPoints}
+                            onChange={handleTableChange}
+                            size={"small"}
+                            // pagination={{
+                            //     defaultPageSize: defaultPageSize,
+                            //     showSizeChanger: true,
+                            // }}
+                            pagination={false}
+                            scroll={{x: "max-content",}}
+                            rowSelection={rowSelection}
+                            rowKey={record => record.nStoreId}
+                            locale={tableLocale}
+                        />
+
+                    )
+                    : (
+                        <Alert 
+                            style={{marginTop: '40px'}}
+                            message="Для просмотра пунктов налива необходимо сначала выбрать нефтебазу"
+                            type="error"
+                        />
+                    )
+            }
+        </CContainer>
     </>
 
 }

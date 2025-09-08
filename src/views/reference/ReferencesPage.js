@@ -1,5 +1,6 @@
 import React, {memo, useState} from "react";
 import {CContainer, CNav, CNavItem, CNavLink, CTabPane} from "@coreui/react";
+import {Tooltip} from "antd";
 
 import {useNavigate} from "react-router";
 import {VendorsPage} from "./vendor/VendorsPage";
@@ -39,12 +40,17 @@ const ReferencesPage = memo(({activeTab}) => {
                     </CNavLink>
                 </CNavItem>
                 <CNavItem>
-                    <CNavLink href={"#"} active={activeKey === 2} disabled={!selectedStoreId} onClick={() => {
-                        setActiveKey(2)
-                        navigate("/references");
-                    }}>
-                        Пункты налива
-                    </CNavLink>
+                    <Tooltip title={"Для просмотра пунктов налива необходимо сначала выбрать нефтебазу"}>
+                        <CNavLink
+                            href={"#"}
+                            active={activeKey === 2}
+                            onClick={() => {
+                            setActiveKey(2)
+                            navigate("/references");
+                        }}>
+                            Пункты налива
+                        </CNavLink>
+                    </Tooltip>
                 </CNavItem>
                 <CNavItem>
                     <CNavLink href={"#"} active={activeKey === 3} onClick={() => {

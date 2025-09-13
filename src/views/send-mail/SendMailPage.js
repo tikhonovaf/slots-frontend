@@ -4,6 +4,7 @@ import {CContainer} from "@coreui/react";
 import { Button, Form, List, Select, Space, DatePicker } from 'antd';
 import dayjs from "dayjs";
 import {useSendMAils} from "../../hooks/slot/useSentMails";
+import {DATE_DISPLAY_FORMAT} from "../../constants";
 
 import { useClientUsers } from "../../hooks/reference/client/useClientUsers";
 
@@ -29,7 +30,8 @@ const SendMailPage = memo(({activeTab}) => {
     };
     
     const onFinish = (values: any) => {
-        const {nClientIds} = values;
+        const {nClientIds, period} = values;
+        const [dDateBegin, dDateEnd] = period;
         
         // Очищаем ответы перед выполнением
         setGenerateResponse(undefined);
@@ -37,7 +39,9 @@ const SendMailPage = memo(({activeTab}) => {
 
         // Выполняем запроса
         sendMails({
-            data: nClientIds,
+            data: {
+                nClientIds, dDateBegin, dDateEnd
+            },
             afterSuccess: (data) => {
                 // Если успешно, то заполняем ответы для отображения
                 setGenerateResponse(data);
@@ -77,7 +81,9 @@ const SendMailPage = memo(({activeTab}) => {
                         />
                     </Form.Item>
 
-                    
+                    <Form.Item name="period" label="Период" rules={[{ required: true }]}>
+                        <RangePicker format={DATE_DISPLAY_FORMAT} />
+                    </Form.Item>
 
                     <Form.Item {...tailLayout}>
                         <Space>

@@ -4,6 +4,7 @@ import {CContainer} from "@coreui/react";
 import { Button, Form, List, Select, Space, DatePicker } from 'antd';
 import dayjs from "dayjs";
 import {useGenerateSlots} from "../../hooks/slot/useGenerateSlots";
+import {DATE_DISPLAY_FORMAT} from "../../constants";
 
 import {useStores} from "../../hooks/reference/store/useStores";
 
@@ -81,7 +82,7 @@ const CreateSlotsPage = memo(({activeTab}) => {
                     </Form.Item>
 
                     <Form.Item name="period" label="Период" rules={[{ required: true }]}>
-                        <RangePicker />
+                        <RangePicker format={DATE_DISPLAY_FORMAT} />
                     </Form.Item>
 
                     <Form.Item {...tailLayout}>

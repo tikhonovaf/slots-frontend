@@ -175,7 +175,7 @@ export const SlotsPage = () => {
 
     const handlePeriodChange = (dates, dateStrings) => {
         const [dDateBegin, dDateEnd] = dates;
-        console.log('dates', dates, dDateBegin?.format(DATE_FORMAT));
+
         setFilteredInfo({
             ...filteredInfo,
             dDateBegin,

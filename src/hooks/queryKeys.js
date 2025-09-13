@@ -8,6 +8,7 @@ const queryKeys = {
     stores: "stores",
     clients: "clients",
     loadingPoints: "loadingPoints",
+    clientUsers: "clientUsers",
     vendors: "vendors",
     vendor: "vendor",
     resources: "resources",

@@ -3,17 +3,10 @@ import {CContainer, CNav, CNavItem, CNavLink, CTabPane} from "@coreui/react";
 import {Tooltip} from "antd";
 
 import {useNavigate} from "react-router";
-import {VendorsPage} from "./vendor/VendorsPage";
 import {StoresPage} from "./store/StoresPage";
 import {ClientsPage} from "./client/ClientsPage";
 import {LoadingPointsPage} from "./loading-point/LoadingPointsPage";
-import {ClustersPage} from "./cluster/ClustersPage";
-import {MethodsPage} from "./method/MethodsPage";
-import {DepartmentsPage} from "./department/DepartmentsPage";
-import {RolesPage} from "./role/RolesPage";
-import {UsersPage} from "./user/UsersPage";
-import {ServersPage} from "./server/ServersPage";
-
+import {ClientUsersPage} from "./client-user/ClientUsersPage";
 
 const ReferencesPage = memo(({activeTab}) => {
 
@@ -21,9 +14,13 @@ const ReferencesPage = memo(({activeTab}) => {
 
     const [activeKey, setActiveKey] = useState(activeTab);
     const [selectedStoreId, setSelectedStoreId] = useState(undefined);
+    const [selectedClientId, setSelectedClientId] = useState(undefined);
 
     const handleStoreSelect = (selectedStoreKeys) => {
         setSelectedStoreId(selectedStoreKeys && selectedStoreKeys.length>0 ? selectedStoreKeys[0] : undefined);
+    }
+    const handleClientSelect = (selectedClientKeys) => {
+        setSelectedClientId(selectedClientKeys && selectedClientKeys.length>0 ? selectedClientKeys[0] : undefined);
     }
 
     return (
@@ -58,6 +55,14 @@ const ReferencesPage = memo(({activeTab}) => {
                         navigate("/references");
                     }}>
                         Клиенты
+                    </CNavLink>
+                </CNavItem>
+                <CNavItem>
+                    <CNavLink href={"#"} active={activeKey === 4} onClick={() => {
+                        setActiveKey(4)
+                        navigate("/references");
+                    }}>
+                        Пользователи
                     </CNavLink>
                 </CNavItem>
 
@@ -140,11 +145,15 @@ const ReferencesPage = memo(({activeTab}) => {
 
                 {activeKey === 3 && (
                     <CTabPane role={"tabpanel"} visible={activeKey === 3}>
-                        <ClientsPage/>
+                        <ClientsPage nClientId={selectedClientId} onClientSelect={handleClientSelect}/>
                     </CTabPane>
                 )}
 
-
+                {activeKey === 4 && (
+                    <CTabPane role={"tabpanel"} visible={activeKey === 4}>
+                        <ClientUsersPage nClientId={selectedClientId}/>
+                    </CTabPane>
+                )}
             </CContainer>
         </CContainer>
     );

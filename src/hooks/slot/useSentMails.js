@@ -2,6 +2,7 @@ import {useMutation, useQueryClient} from "react-query";
 
 import queryKeys from "../queryKeys";
 import {useCookies} from "react-cookie";
+import type {SendMailModel} from "../../models/slot/send-mail.model";
 import {message} from "antd";
 
 
@@ -12,7 +13,7 @@ export function useSendMAils(): SendMail {
     let _callbackSuccess: any;
     let _callbackError: any;
 
-    const _useApi = async (data: number[], afterSuccess: any, afterError: any) => {
+    const _useApi = async (data: SendMailModel, afterSuccess: any, afterError: any) => {
         _callbackSuccess = afterSuccess;
         _callbackError = afterError;
 

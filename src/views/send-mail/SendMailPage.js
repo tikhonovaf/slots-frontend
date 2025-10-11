@@ -4,7 +4,7 @@ import {CContainer} from "@coreui/react";
 import { Button, Form, List, Select, Space, DatePicker } from 'antd';
 import dayjs from "dayjs";
 import {useSendMAils} from "../../hooks/slot/useSentMails";
-import {DATE_DISPLAY_FORMAT} from "../../constants";
+import {DATE_DISPLAY_FORMAT, DATE_FORMAT} from "../../constants";
 
 import { useClientUsers } from "../../hooks/reference/client/useClientUsers";
 
@@ -30,7 +30,7 @@ const SendMailPage = memo(({activeTab}) => {
     };
     
     const onFinish = (values: any) => {
-        const {nClientIds, period} = values;
+        const {nUserIds, period} = values;
         const [dDateBegin, dDateEnd] = period;
         
         // Очищаем ответы перед выполнением
@@ -40,7 +40,9 @@ const SendMailPage = memo(({activeTab}) => {
         // Выполняем запроса
         sendMails({
             data: {
-                nClientIds, dDateBegin, dDateEnd
+                nUserIds,
+                dDateBegin: dDateBegin?.format(DATE_FORMAT),
+                dDateEnd: dDateEnd?.format(DATE_FORMAT)
             },
             afterSuccess: (data) => {
                 // Если успешно, то заполняем ответы для отображения
@@ -71,17 +73,25 @@ const SendMailPage = memo(({activeTab}) => {
                     onFinish={onFinish}
                     initialValues={{ period: [dayjs(), dayjs().add(1, 'day')] }}
                     >
-                    <Form.Item name="nClientIds" label="Клиенты" rules={[{ required: true }]}>
+                    <Form.Item
+                        name="nUserIds"
+                        label="Пользователи"
+                        rules={[{ required: true, message: 'Нужно выбрать пользователя' }]}
+                    >
                         <Select
                             mode="multiple"
                             allowClear
                             style={{ width: '100%' }}
-                            placeholder="Нужно выбрать клиента"
+                            placeholder="Нужно выбрать пользователя"
                             options={clientsOptions}
                         />
                     </Form.Item>
 
-                    <Form.Item name="period" label="Период" rules={[{ required: true }]}>
+                    <Form.Item
+                        name="period"
+                        label="Период"
+                        rules={[{ required: true, message: 'Нужно выбрать период' }]}
+                    >
                         <RangePicker format={DATE_DISPLAY_FORMAT} />
                     </Form.Item>
 

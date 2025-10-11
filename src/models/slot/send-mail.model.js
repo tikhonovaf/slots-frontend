@@ -1,5 +1,5 @@
 export type SendMailModel = Partial<{
-    nClientIds: number[];
+    nUserIds: number[];
     dDateBegin: string;
     dDateEnd: string;
 }>

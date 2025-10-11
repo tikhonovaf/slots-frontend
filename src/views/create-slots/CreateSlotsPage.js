@@ -4,7 +4,7 @@ import {CContainer} from "@coreui/react";
 import { Button, Form, List, Select, Space, DatePicker } from 'antd';
 import dayjs from "dayjs";
 import {useGenerateSlots} from "../../hooks/slot/useGenerateSlots";
-import {DATE_DISPLAY_FORMAT} from "../../constants";
+import {DATE_DISPLAY_FORMAT, DATE_FORMAT} from "../../constants";
 
 import {useStores} from "../../hooks/reference/store/useStores";
 
@@ -40,7 +40,9 @@ const CreateSlotsPage = memo(({activeTab}) => {
         // Выполняем запроса
         generateSlots({
             data: {
-                nStoreIds, dDateBegin, dDateEnd
+                nStoreIds,
+                dDateBegin: dDateBegin?.format(DATE_FORMAT),
+                dDateEnd: dDateEnd?.format(DATE_FORMAT)
             },
             afterSuccess: (data) => {
                 // Если успешно, то заполняем ответы для отображения
@@ -71,7 +73,11 @@ const CreateSlotsPage = memo(({activeTab}) => {
                     onFinish={handleFinish}
                     initialValues={{ period: [dayjs(), dayjs().add(1, 'day')] }}
                     >
-                    <Form.Item name="nStoreIds" label="Нефтебазы" rules={[{ required: true }]}>
+                    <Form.Item
+                        name="nStoreIds"
+                        label="Нефтебазы"
+                        rules={[{ required: true, message: 'Нужно выбрать нефтебазу' }]}
+                    >
                         <Select
                             mode="multiple"
                             allowClear
@@ -81,7 +87,11 @@ const CreateSlotsPage = memo(({activeTab}) => {
                         />
                     </Form.Item>
 
-                    <Form.Item name="period" label="Период" rules={[{ required: true }]}>
+                    <Form.Item
+                        name="period"
+                        label="Период"
+                        rules={[{ required: true, message: 'Нужно выбрать период' }]}
+                    >
                         <RangePicker format={DATE_DISPLAY_FORMAT} />
                     </Form.Item>
 

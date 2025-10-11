@@ -36,7 +36,6 @@ export const SlotsPage = () => {
 
     const [showChangeSlotStatusDialog, setShowChangeSlotStatusDialog] = useState(false);
     const [changeSlotStatusType, setChangeSlotStatusType] = useState(undefined);
-    const [slotsWithKey, setSlotsWithKey] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [connectionInProgress, setConnectionInProgress] = useState(false);
     const [filteredInfo, setFilteredInfo] = useState({ dDateBegin: dayjs(), dDateEnd: dayjs().add(1, 'day')});
@@ -110,18 +109,6 @@ export const SlotsPage = () => {
         />), onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     });
 
-    useEffect(() => {
-        setSlotsWithKey(
-            (slots && slots.length > 0)
-                ? slots
-                    .sort((a, b) => a.nSlotId - b.nSlotId)
-                    .map((item, index) => ({
-                        ...item, key: index + 1
-                    }))
-                : []
-        )
-    }, [slots]);
-
     const storesFilter = useMemo(() => {
         return (storesStatus === "success" && stores)
             ? stores.map(store => ({ value: store.nStoreId, text: store.vcName }))
@@ -188,10 +175,6 @@ export const SlotsPage = () => {
             title: '№',
             dataIndex: 'key',
             key: 'key',
-            render: (item, record) => (<Link className={'table-link'} to={`/references/slots/${record.nSlotId}`}>
-                <div style={{color: 'gray'}}>{record.key}</div>
-            </Link>),
-            defaultSortOrder: 'descend',
             sorter: (a, b) => a.key - b.key,
             sortDirections: ['ascend', 'descend', 'ascend'],
             width: '5%'
@@ -199,57 +182,51 @@ export const SlotsPage = () => {
         {
             title: 'Дата',
             dataIndex: 'dDate',
-            key: 'dDate', ...getColumnSearchProps('dDate'),
-            render: (item, record) => <div style={{width: '100%'}}>{record.dDate ? moment(record.dDate).format('DD.MM.YYYY') : ''}</div>,
+            key: 'dDate',
+            render: (item, record) => <div style={{width: '100%'}}>{record.dDate ? moment(record.dDate).format(DATE_DISPLAY_FORMAT) : ''}</div>,
             sorter: (a, b) => a.dDate.length - b.dDate.length,
             sortDirections: ['ascend', 'descend', 'ascend'],
-            ellipsis: true, // width: '30%'
         },
         {
             title: 'Начало',
             dataIndex: 'dStartTime',
-            key: 'dStartTime',
-            ...getColumnSearchProps('dStartTime')
+            key: 'dStartTime'
         },
         {
             title: 'Окончание',
             dataIndex: 'dEndTime',
-            key: 'dEndTime',
-            ...getColumnSearchProps('dEndTime')
+            key: 'dEndTime'
         },
         {
             title: 'Пункт налива',
-            dataIndex: 'nLoadingPointId',
-            key: 'nLoadingPointId',
+            dataIndex: 'vcLoadingPointCode',
+            key: 'vcLoadingPointCode',
             filter: userFilter,
             onFilter: (value, record) => record.nLoadingPointId === parseInt(value),
             filterSearch: true,
             filteredValue: filteredInfo.nLoadingPointId || null,
-            render: (item, record) => <div style={{width: '100%'}}>{record.vcLoadingPointName}</div>,
             sorter: (a, b) => a.nLoadingPointId - b.nLoadingPointId,
             sortDirections: ['ascend', 'descend', 'ascend'], // ellipsis: true,
             // width: '15%',
         },
         {
             title: 'Нефтебаза',
-            dataIndex: 'nStoreId',
-            key: 'nStoreId',
+            dataIndex: 'vcStoreCode',
+            key: 'vcStoreCode',
             filters: storesFilter,
             filterSearch: true,
             filteredValue: filteredInfo.nStoreId || null,
-            render: (item, record) => <div style={{width: '100%'}}>{record.vcStoreName}</div>,
             sorter: (a, b) => a.nStoreId - b.nStoreId,
             sortDirections: ['ascend', 'descend', 'ascend'], // ellipsis: true,
             // width: '15%',
         },
         {
             title: 'Клиент',
-            dataIndex: 'nClientId',
-            key: 'nClientId',
+            dataIndex: 'vcClientCode',
+            key: 'vcClientCode',
             filters: clientsFilter,
             filterSearch: true,
             filteredValue: filteredInfo.nClientId || null,
-            render: (item, record) => <div style={{width: '100%'}}>{record.vcClientName}</div>,
             sorter: (a, b) => a.nClientId - b.nClientId,
             sortDirections: ['ascend', 'descend', 'ascend'], // ellipsis: true,
             // width: '15%',
@@ -356,7 +333,7 @@ export const SlotsPage = () => {
         <Table
             loading={slotsStatus === "loading"}
             columns={columns}
-            dataSource={slotsWithKey}
+            dataSource={slots}
             onChange={handleTableChange}
             size={"small"}
             // pagination={{

@@ -210,6 +210,17 @@ export const SlotsPage = () => {
             // width: '15%',
         },
         {
+            title: 'Комментарий',
+            dataIndex: 'vcLoadingPointComment',
+            key: 'vcLoadingPointComment', ...getColumnSearchProps('vcLoadingPointComment'),
+            filterSearch: true,
+            filteredValue: filteredInfo.vcLoadingPointComment || null,
+            sorter: (a, b) => a.vcLoadingPointComment - b.vcLoadingPointComment,
+            sortDirections: ['ascend', 'descend', 'ascend'], // ellipsis: true,
+            ellipsis: true,
+            // width: '15%',
+        },
+        {
             title: 'Нефтебаза',
             dataIndex: 'vcStoreCode',
             key: 'vcStoreCode',

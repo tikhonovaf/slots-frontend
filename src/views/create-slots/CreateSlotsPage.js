@@ -6,19 +6,19 @@ import dayjs from "dayjs";
 import {useGenerateSlots} from "../../hooks/slot/useGenerateSlots";
 import {DATE_DISPLAY_FORMAT, DATE_FORMAT} from "../../constants";
 
-import {useStores} from "../../hooks/reference/store/useStores";
+import {useTemplates} from "../../hooks/reference/template/useTemplates";
 
 const CreateSlotsPage = memo(({activeTab}) => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const [stores, storesStatus] = useStores();
+    const [templates, templatesStatus] = useTemplates();
     const { RangePicker } = DatePicker;
     const generateSlots = useGenerateSlots();
 
     const [generateResponse, setGenerateResponse] = useState(undefined);
     const [generating, setGenerating] = useState(false);
 
-    const storeOptions = useMemo(() => stores ? stores.map(s => ({ value: s.nStoreId, label: s.vcName })) : [], [stores]);
+    const templateOptions = useMemo(() => templates ? templates.map(s => ({ value: s.nSlotTemplateId, label: s.vcName })) : [], [templates]);
 
     const layout = {
         labelCol: { span: 4 },
@@ -30,7 +30,7 @@ const CreateSlotsPage = memo(({activeTab}) => {
     };
     
     const handleFinish = (values: any) => {
-        const {nStoreIds, period} = values;
+        const {nSlotTemplateId, period} = values;
         const [dDateBegin, dDateEnd] = period;
 
         // Очищаем ответы перед выполнением
@@ -40,7 +40,7 @@ const CreateSlotsPage = memo(({activeTab}) => {
         // Выполняем запроса
         generateSlots({
             data: {
-                nStoreIds,
+                nSlotTemplateId,
                 dDateBegin: dDateBegin?.format(DATE_FORMAT),
                 dDateEnd: dDateEnd?.format(DATE_FORMAT)
             },
@@ -74,16 +74,16 @@ const CreateSlotsPage = memo(({activeTab}) => {
                     initialValues={{ period: [dayjs(), dayjs().add(1, 'day')] }}
                     >
                     <Form.Item
-                        name="nStoreIds"
-                        label="Нефтебазы"
-                        rules={[{ required: true, message: 'Нужно выбрать нефтебазу' }]}
+                        name="nSlotTemplateId"
+                        label="Шаблон"
+                        rules={[{ required: true, message: 'Нужно выбрать шаблон' }]}
                     >
                         <Select
-                            mode="multiple"
+                            // mode="multiple"
                             allowClear
                             style={{ width: '100%' }}
-                            placeholder="Нужно выбрать нефтебазу"
-                            options={storeOptions}
+                            placeholder="Нужно выбрать шаблон"
+                            options={templateOptions}
                         />
                     </Form.Item>
 

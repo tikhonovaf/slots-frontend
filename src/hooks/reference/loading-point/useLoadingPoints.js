@@ -27,11 +27,10 @@ export function useLoadingPoints(nStoreId): [LoadingPointModel[], 'loading' | 'e
                 window.location.reload()
             }
 
-            return response.json()
+            return (response || '[]').json()
                 .then((data) => {
                     return data && data.length > 0
-                    ? data?.sort((a, b) => a.nLoadingPointId - b.nLoadingPointId)
-                        .map((item, index) => ({
+                    ? data?.map((item, index) => ({
                             ...item, key: item.nLoadingPointId
                         }))
                     : []

@@ -31,8 +31,6 @@ export const LoadingPointsPage = ({ nStoreId }) => {
     const [userFilter, setUserFilter] = useState([]);
     const [vendorFilter, setVendorFilter] = useState([]);
 
-console.log('nStoreId', nStoreId);
-
     const [loadingPoints, loadingPointsStatus] = useLoadingPoints(nStoreId);
 
     const handleSelect = (id) => {
@@ -108,7 +106,6 @@ console.log('nStoreId', nStoreId);
 
     const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter, extra) => {
         setFilteredInfo(filters);
-        console.log('filters', filters);
     };
 
     const columns = [
@@ -116,9 +113,6 @@ console.log('nStoreId', nStoreId);
             title: '№',
             dataIndex: 'key',
             key: 'key',
-            render: (item, record) => (<Link className={'table-link'} to={`/references/stores/${record.nStoreId}`}>
-                <div style={{color: 'gray'}}>{record.key}</div>
-            </Link>),
             defaultSortOrder: 'descend',
             sorter: (a, b) => a.key - b.key,
             sortDirections: ['ascend', 'descend', 'ascend'],
@@ -130,10 +124,6 @@ console.log('nStoreId', nStoreId);
             key: 'vcCode', ...getColumnSearchProps('vcCode'),
             filteredValue: filteredInfo.vcCode || null,
             filterSearch: true,
-            render: (item, record) => <Link className={'table-link'} to={`/references/stores/${record.nStoreId}`}
-                                            onClick={() => handleSelect(record.nStoreId)}>
-                <div style={{width: '100%'}}>{item}</div>
-            </Link>,
             sorter: (a, b) => a.vcCode.length - b.vcCode.length,
             sortDirections: ['ascend', 'descend', 'ascend'],
             ellipsis: true, // width: '30%'
@@ -144,11 +134,17 @@ console.log('nStoreId', nStoreId);
             key: 'vcName', ...getColumnSearchProps('vcName'),
             filteredValue: filteredInfo.vcName || null,
             filterSearch: true,
-            render: (item, record) => <Link className={'table-link'} to={`/references/stores/${record.nStoreId}`}
-                                            onClick={() => handleSelect(record.nStoreId)}>
-                <div style={{width: '100%'}}>{item}</div>
-            </Link>,
             sorter: (a, b) => a.vcName.length - b.vcName.length,
+            sortDirections: ['ascend', 'descend', 'ascend'],
+            ellipsis: true, // width: '30%'
+        }, 
+        {
+            title: 'Комментарий',
+            dataIndex: 'vcComment',
+            key: 'vcComment', ...getColumnSearchProps('vcComment'),
+            filteredValue: filteredInfo.vcComment || null,
+            filterSearch: true,
+            sorter: (a, b) => a.vcComment.length - b.vcComment.length,
             sortDirections: ['ascend', 'descend', 'ascend'],
             ellipsis: true, // width: '30%'
         }, 
@@ -204,7 +200,7 @@ console.log('nStoreId', nStoreId);
                             pagination={false}
                             scroll={{x: "max-content",}}
                             rowSelection={rowSelection}
-                            rowKey={record => record.nStoreId}
+                            rowKey={record => record.nLoadingPointId}
                             locale={tableLocale}
                         />
 
